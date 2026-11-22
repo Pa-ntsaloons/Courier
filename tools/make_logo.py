@@ -1,87 +1,83 @@
-"""Render the Courier logo. Usage: python make_logo.py <out_dir>"""
+"""Render the Courier logo in the same style as Pa_nts' other addon logos:
+dark rounded tile, light grey border, flat gold + cream icon with dark outlines.
+
+Usage: python make_logo.py <out_dir>
+"""
 import math
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw
 
 S = 1600  # draw big, downsample for smooth edges
 out_dir = Path(sys.argv[1])
 out_dir.mkdir(parents=True, exist_ok=True)
+
+# Palette sampled from the reference logos
+TILE_DARK = (13, 13, 13, 255)
+TILE_LIGHT = (20, 20, 23, 255)
+BORDER = (153, 153, 153, 255)
+BORDER_INNER = (116, 116, 116, 255)
+GOLD = (255, 209, 0, 255)
+GOLD_DARK = (214, 150, 0, 255)
+CREAM = (254, 252, 214, 255)
+CREAM_SHADE = (200, 186, 156, 255)
+OUTLINE = (58, 40, 34, 255)
 
 
 def lerp(a, b, t):
     return tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(len(a)))
 
 
-# --- Background: radial gradient, deep navy -> near black ---------------------
-bg = Image.new("RGBA", (S, S))
-px = bg.load()
-c_in, c_out = (38, 52, 96, 255), (8, 10, 22, 255)
-cx = cy = S / 2
-maxd = math.hypot(cx, cy)
-for y in range(S):
-    for x in range(S):
-        t = min(1.0, math.hypot(x - cx, y - cy * 0.85) / (maxd * 0.85))
-        px[x, y] = lerp(c_in, c_out, t ** 1.3)
-
-# Rounded-square mask
-mask = Image.new("L", (S, S), 0)
-ImageDraw.Draw(mask).rounded_rectangle([0, 0, S - 1, S - 1], radius=int(S * 0.16), fill=255)
-
 img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-img.paste(bg, (0, 0), mask)
+
+# --- Tile: dark fill with a subtle top-to-bottom gradient, grey border ----------
+radius = int(S * 0.10)
+grad = Image.new("RGBA", (S, S))
+gd = ImageDraw.Draw(grad)
+for y in range(S):
+    gd.line([(0, y), (S, y)], fill=lerp(TILE_LIGHT, TILE_DARK, y / S))
+mask = Image.new("L", (S, S), 0)
+ImageDraw.Draw(mask).rounded_rectangle([0, 0, S - 1, S - 1], radius=radius, fill=255)
+img.paste(grad, (0, 0), mask)
+
 d = ImageDraw.Draw(img)
+bw = int(S * 0.036)
+d.rounded_rectangle([0, 0, S - 1, S - 1], radius=radius, outline=BORDER, width=bw)
+d.rounded_rectangle([bw, bw, S - 1 - bw, S - 1 - bw], radius=radius - bw, outline=BORDER_INNER, width=int(S * 0.008))
 
-# --- Gold double border --------------------------------------------------------
-gold, gold_dark = (232, 186, 84, 255), (140, 98, 30, 255)
-inset = int(S * 0.035)
-d.rounded_rectangle([inset, inset, S - inset, S - inset], radius=int(S * 0.13), outline=gold_dark, width=int(S * 0.028))
-d.rounded_rectangle([inset, inset, S - inset, S - inset], radius=int(S * 0.13), outline=gold, width=int(S * 0.014))
+# --- Envelope: cream, shaded toward the edges like the book pages ---------------
+ex0, ey0, ex1, ey1 = int(S * 0.20), int(S * 0.43), int(S * 0.80), int(S * 0.80)
+env = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+ep = env.load()
+cx, cy = (ex0 + ex1) / 2, (ey0 + ey1) / 2
+hw, hh = (ex1 - ex0) / 2, (ey1 - ey0) / 2
+for y in range(ey0, ey1):
+    for x in range(ex0, ex1):
+        t = max(abs(x - cx) / hw, abs(y - cy) / hh)
+        ep[x, y] = lerp(CREAM, CREAM_SHADE, max(0.0, (t - 0.55) / 0.45) ** 1.6)
+emask = Image.new("L", (S, S), 0)
+ImageDraw.Draw(emask).rounded_rectangle([ex0, ey0, ex1, ey1], radius=int(S * 0.025), fill=255)
+img.paste(env, (0, 0), emask)
 
-# --- Speed lines (courier = fast delivery) ------------------------------------
-for i, (y, length) in enumerate([(0.44, 0.08), (0.53, 0.11), (0.62, 0.07)]):
-    yy = int(S * y)
-    x1 = int(S * 0.205)
-    d.rounded_rectangle([x1 - int(S * length), yy - int(S * 0.012), x1, yy + int(S * 0.012)],
-                        radius=int(S * 0.012), fill=(232, 186, 84, 170))
-
-# --- Envelope -------------------------------------------------------------------
-ex0, ey0, ex1, ey1 = int(S * 0.24), int(S * 0.32), int(S * 0.84), int(S * 0.72)
-shadow = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-ImageDraw.Draw(shadow).rounded_rectangle([ex0 + 18, ey0 + 30, ex1 + 18, ey1 + 30], radius=30, fill=(0, 0, 0, 150))
-shadow = shadow.filter(ImageFilter.GaussianBlur(28))
-img.alpha_composite(shadow)
 d = ImageDraw.Draw(img)
-
-parch, parch_dark, edge = (244, 226, 184, 255), (214, 186, 132, 255), (120, 84, 40, 255)
-d.rounded_rectangle([ex0, ey0, ex1, ey1], radius=30, fill=parch, outline=edge, width=10)
+ow = int(S * 0.016)
 mx = (ex0 + ex1) // 2
-# lower side folds
-d.polygon([(ex0 + 8, ey1 - 8), (mx, ey0 + int((ey1 - ey0) * 0.55)), (ex1 - 8, ey1 - 8)], fill=parch_dark)
-d.line([(ex0 + 8, ey1 - 8), (mx, ey0 + int((ey1 - ey0) * 0.55)), (ex1 - 8, ey1 - 8)], fill=edge, width=8)
 # top flap
-flap_tip = (mx, ey0 + int((ey1 - ey0) * 0.62))
-d.polygon([(ex0 + 6, ey0 + 6), flap_tip, (ex1 - 6, ey0 + 6)], fill=(236, 214, 166, 255))
-d.line([(ex0 + 6, ey0 + 6), flap_tip, (ex1 - 6, ey0 + 6)], fill=edge, width=10, joint="curve")
+d.line([(ex0 + ow, ey0 + ow), (mx, ey0 + int((ey1 - ey0) * 0.58)), (ex1 - ow, ey0 + ow)], fill=OUTLINE, width=ow, joint="curve")
+# outline
+d.rounded_rectangle([ex0, ey0, ex1, ey1], radius=int(S * 0.025), outline=OUTLINE, width=ow)
 
-# --- Wax seal with a contact silhouette ---------------------------------------
-sx, sy, r = flap_tip[0], flap_tip[1] - int(S * 0.01), int(S * 0.115)
-# irregular wax blob
-blob = []
-for k in range(36):
-    a = 2 * math.pi * k / 36
-    rr = r * (1.0 + 0.06 * math.sin(a * 5) + 0.03 * math.cos(a * 9))
-    blob.append((sx + rr * math.cos(a), sy + rr * math.sin(a)))
-d.polygon(blob, fill=(150, 22, 28, 255))
-d.ellipse([sx - r * 0.80, sy - r * 0.80, sx + r * 0.80, sy + r * 0.80], fill=(186, 34, 40, 255))
-d.ellipse([sx - r * 0.80, sy - r * 0.80, sx + r * 0.80, sy + r * 0.80], outline=(120, 14, 20, 255), width=8)
-# highlight
-d.arc([sx - r * 0.66, sy - r * 0.66, sx + r * 0.66, sy + r * 0.66], 200, 290, fill=(236, 110, 110, 200), width=10)
-# person silhouette (head + shoulders) in gold
-hr = r * 0.20
-d.ellipse([sx - hr, sy - r * 0.46 - hr, sx + hr, sy - r * 0.46 + hr], fill=gold)
-d.chord([sx - r * 0.42, sy - r * 0.12, sx + r * 0.42, sy + r * 0.70], 180, 360, fill=gold)
+# --- Gold contact badge above the envelope (like the coin on the book logo) ------
+bx, by, br = S // 2, int(S * 0.30), int(S * 0.125)
+d.ellipse([bx - br - ow, by - br - ow, bx + br + ow, by + br + ow], fill=OUTLINE)
+d.ellipse([bx - br, by - br, bx + br, by + br], fill=GOLD)
+ring = int(br * 0.74)
+d.ellipse([bx - ring, by - ring, bx + ring, by + ring], outline=GOLD_DARK, width=int(S * 0.014))
+# person silhouette
+hr = br * 0.22
+d.ellipse([bx - hr, by - br * 0.40 - hr, bx + hr, by - br * 0.40 + hr], fill=GOLD_DARK)
+d.chord([bx - br * 0.44, by - br * 0.06, bx + br * 0.44, by + br * 0.78], 180, 360, fill=GOLD_DARK)
 
 # --- Export ---------------------------------------------------------------------
 for size in (400, 800):
