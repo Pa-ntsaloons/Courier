@@ -5,6 +5,7 @@
 ## Version: 0.1.0
 ## SavedVariables: CourierDB
 ## OptionalDeps: Syndicator
+## Category: Mail
 ## IconTexture: Interface\Icons\INV_Letter_15
 
 Data.lua
