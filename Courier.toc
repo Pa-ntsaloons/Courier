@@ -1,0 +1,11 @@
+## Interface: 16001, 120105, 120107
+## Title: Courier
+## Notes: Adds a Contacts button to the mailbox for quickly mailing your alts, friends, guildmates and recent recipients.
+## Author: lthag
+## Version: 0.1.0
+## SavedVariables: CourierDB
+## OptionalDeps: Syndicator
+## IconTexture: Interface\Icons\INV_Letter_15
+
+Data.lua
+Contacts.lua
