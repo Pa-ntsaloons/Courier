@@ -41,6 +41,16 @@ Without Syndicator, alts appear once you've logged into each one with Courier en
 | `/courier clearrecent` | Clear the Recent list |
 | `/courier debug` | Print what the friend and Battle.net APIs return (for bug reports) |
 
+## Building a release
+
+Update `## Version:` in `Courier.toc`, then run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build.ps1
+```
+
+This creates `releases\Courier-<version>.zip`, ready to upload to CurseForge.
+
 ## Reporting bugs
 
 Please open an issue that includes the output of `/courier debug` and any Lua error text.
