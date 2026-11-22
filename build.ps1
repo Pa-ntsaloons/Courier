@@ -34,3 +34,16 @@ finally {
     $zip.Dispose()
 }
 Write-Host "Built $zipPath"
+
+# Pull this version's notes out of CHANGELOG.md and copy them for the CurseForge upload form
+$changelog = Get-Content (Join-Path $root 'CHANGELOG.md') -Raw
+$pattern = '(?ms)^## ' + [regex]::Escape($version) + '\s*\r?\n(.*?)(?=^## |\z)'
+$match = [regex]::Match($changelog, $pattern)
+if ($match.Success) {
+    $notes = $match.Groups[1].Value.Trim()
+    Write-Host "`n--- Changelog for $version ---`n$notes`n"
+    try { Set-Clipboard -Value $notes; Write-Host '(Copied to clipboard)' } catch { }
+}
+else {
+    Write-Warning "CHANGELOG.md has no '## $version' section. Add one before uploading."
+}

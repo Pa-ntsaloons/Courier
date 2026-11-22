@@ -43,13 +43,13 @@ Without Syndicator, alts appear once you've logged into each one with Courier en
 
 ## Building a release
 
-Update `## Version:` in `Courier.toc`, then run:
+Update `## Version:` in `Courier.toc`, add a matching `## <version>` section at the top of `CHANGELOG.md`, then run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File .\build.ps1
 ```
 
-This creates `releases\Courier-<version>.zip`, ready to upload to CurseForge.
+This creates `releases\Courier-<version>.zip`, ready to upload to CurseForge, and copies that version's changelog to the clipboard for the upload form.
 
 ## Reporting bugs
 
