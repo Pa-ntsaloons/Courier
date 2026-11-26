@@ -12,11 +12,12 @@ Built for **WoW Forever**, and it also works on Retail.
 - **Friends**: your in-game friends list, online first
 - **Battle.net**: Battle.net friends currently online in the same game, faction and ruleset
 - **Guild**: your guild roster
+- **Inbox gold**: the total gold waiting in your inbox. Hover it to split it into auction sales, auction refunds, gold from players (listed by sender) and other mail, plus any COD you'd have to pay
 - Class icons and class colours throughout
 - Supports WoW Forever's region-wide names with surnames and its rulesets (PvP, RP-PvP and so on)
 - **Syndicator integration**: if [Syndicator](https://www.curseforge.com/wow/addons/syndicator) is installed, every character it knows about shows up as an alt, without logging each one in first
 
-Courier only adds a button. It doesn't replace the mailbox, so it works alongside other mail addons.
+Courier only adds a contacts button and a gold total. It doesn't replace the mailbox, so it works alongside other mail addons.
 
 ## Installation
 

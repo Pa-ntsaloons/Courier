@@ -338,15 +338,21 @@ function ns.GetRecent()
 	collect(ns.GetBNetFriends(), "Battle.net")
 	collect(ns.GetGuild(), "Guild")
 
-	local list, known = {}, ns.GetAllKnownChars()
+	-- Recent is shared across all your characters, so hide anyone this character can't mail:
+	-- itself, other rulesets / unconnected realms, and your own alts on the other faction.
+	local list, known, realms = {}, ns.GetAllKnownChars(), MailableRealms()
+	local me = ns.player.full:lower()
 	for _, full in ipairs(CourierDB.recent) do
 		local key = full:lower()
 		local c = known[full]
-		local label = ns.ClassLabel(ns.RecipientText(full), classes[key] or (c and c.class))
-		if tags[key] then
-			label = label .. " |cff999999(" .. table.concat(tags[key], ", ") .. ")|r"
+		local _, realm = ns.SplitName(full)
+		if key ~= me and realms[realm] and not (c and c.faction and c.faction ~= ns.player.faction) then
+			local label = ns.ClassLabel(ns.RecipientText(full), classes[key] or (c and c.class))
+			if tags[key] then
+				label = label .. " |cff999999(" .. table.concat(tags[key], ", ") .. ")|r"
+			end
+			list[#list + 1] = { full = full, label = label }
 		end
-		list[#list + 1] = { full = full, label = label }
 	end
 	return list
 end

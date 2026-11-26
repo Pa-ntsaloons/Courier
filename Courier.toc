@@ -2,7 +2,7 @@
 ## Title: Courier
 ## Notes: Adds a Contacts button to the mailbox for quickly mailing your alts, friends, guildmates and recent recipients.
 ## Author: Pa_nts
-## Version: 1.0.0
+## Version: 1.1.0
 ## SavedVariables: CourierDB
 ## OptionalDeps: Syndicator
 ## Category: Mail
@@ -10,3 +10,4 @@
 
 Data.lua
 Contacts.lua
+Inbox.lua

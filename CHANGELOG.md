@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0
+
+- Inbox gold total in the top-right of the Inbox. Hover it for a breakdown: auction sales, auction refunds, gold from players (by sender) and other mail, plus any COD you'd owe
+- Recent no longer shows the character you're on, people on other rulesets or unconnected realms, or your own alts on the other faction
+
 ## 1.0.0
 
 First release.

@@ -13,6 +13,7 @@ Built for **WoW Forever**, and it also works on Retail.
 - **Friends**: your in-game friends list, online first
 - **Battle.net**: Battle.net friends who are online in the same game, faction and ruleset, shown with their BattleTag
 - **Guild**: your full guild roster (scrollable)
+- **Inbox gold**: see how much gold is waiting in your inbox. Hover it for a breakdown of auction sales, auction refunds, gold from players (by sender) and everything else, plus any COD you'd owe
 - **Class icons and class colours** everywhere
 - **Built for WoW Forever**: understands region-wide names with surnames, and only shows people on your ruleset (Normal, PvP, RP-PvP...)
 
@@ -24,7 +25,7 @@ Syndicator is **optional**. Without it, alts appear once you've logged into each
 
 ## Lightweight and compatible
 
-Courier doesn't replace the mailbox. It adds one button and nothing else, so it works alongside other mail addons, bag addons and UI packs.
+Courier doesn't replace the mailbox. It adds a contacts button and a gold total and nothing else, so it works alongside other mail addons, bag addons and UI packs.
 
 ---
 

@@ -7,7 +7,7 @@ $root = $PSScriptRoot
 $addon = 'Courier'
 
 # Files that ship in the addon (everything else in the repo stays out of the zip)
-$files = @('Courier.toc', 'Data.lua', 'Contacts.lua', 'LICENSE')
+$files = @('Courier.toc', 'Data.lua', 'Contacts.lua', 'Inbox.lua', 'LICENSE')
 
 # Read the version from the .toc
 $versionLine = Select-String -Path (Join-Path $root 'Courier.toc') -Pattern '^## Version:\s*(.+)$'
